@@ -753,7 +753,7 @@
 
         // State
         let prayerTimes = {};
-        let location = { lat: 21.4225, lng: 39.8262 }; // Default: Makkah
+        let userLocation = { lat: 21.4225, lng: 39.8262 }; // Default: Makkah
         let dhikrCounter = 0;
         let dhikrGoal = 0;
 
@@ -787,8 +787,8 @@
         // Prayer Time Calculations (using simplified algorithm)
         function calculatePrayerTimes() {
             const today = new Date();
-            const lat = location.lat;
-            const lng = location.lng;
+            const lat = userLocation.lat;
+            const lng = userLocation.lng;
 
             // This is a simplified calculation - in production, use a library like PrayTimes.js
             // For now, using approximate times based on location
@@ -1009,8 +1009,8 @@
 
         // Qibla Calculation
         function calculateQibla() {
-            const lat1 = location.lat * Math.PI / 180;
-            const lng1 = location.lng * Math.PI / 180;
+            const lat1 = userLocation.lat * Math.PI / 180;
+            const lng1 = userLocation.lng * Math.PI / 180;
 
             // Kaaba coordinates
             const lat2 = 21.4225 * Math.PI / 180;
@@ -1190,8 +1190,8 @@
             const saved = localStorage.getItem('location');
             if (saved) {
                 location = JSON.parse(saved);
-                document.getElementById('latitude').value = location.lat;
-                document.getElementById('longitude').value = location.lng;
+                document.getElementById('latitude').value = userLocation.lat;
+                document.getElementById('longitude').value = userLocation.lng;
                 updateLocationDisplay();
             }
         }
@@ -1205,7 +1205,7 @@
                 return;
             }
 
-            location = { lat, lng };
+            userLocation = { lat, lng };
             localStorage.setItem('location', JSON.stringify(location));
             updateLocationDisplay();
             calculatePrayerTimes();
@@ -1220,12 +1220,12 @@
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    location = {
+                    userLocation = {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     };
-                    document.getElementById('latitude').value = location.lat.toFixed(4);
-                    document.getElementById('longitude').value = location.lng.toFixed(4);
+                    document.getElementById('latitude').value = userLocation.lat.toFixed(4);
+                    document.getElementById('longitude').value = userLocation.lng.toFixed(4);
                     localStorage.setItem('location', JSON.stringify(location));
                     updateLocationDisplay();
                     calculatePrayerTimes();
@@ -1239,13 +1239,13 @@
 
         function updateLocationDisplay() {
             document.getElementById('currentLocation').textContent =
-                `Latitude: ${location.lat.toFixed(4)}, Longitude: ${location.lng.toFixed(4)}`;
+                `Latitude: ${userLocation.lat.toFixed(4)}, Longitude: ${userLocation.lng.toFixed(4)}`;
         }
 
         function resetAllData() {
             if (confirm('This will delete all your prayer progress and settings. Are you sure?')) {
                 localStorage.clear();
-                location = { lat: 21.4225, lng: 39.8262 };
+                userLocation = { lat: 21.4225, lng: 39.8262 };
                 dhikrCounter = 0;
                 dhikrGoal = 0;
                 alert('All data has been reset.');
